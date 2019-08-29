@@ -8,23 +8,23 @@ namespace TerrariaApi.Server
 	{
 		public MessageBuffer Buffer
 		{
-			get; 
+			get;
 			internal set;
 		}
 		public int Who
 		{
-			get; 
+			get;
 			internal set;
 		}
 		public string Text
 		{
-			get; 
-			internal set;
-		}
-		public Terraria.Chat.ChatCommandId CommandId
-		{
 			get;
 			internal set;
 		}
+//		public Terraria.Chat.ChatCommandId CommandId
+//		{
+//			get;
+//			internal set;
+//		}
 	}
 }

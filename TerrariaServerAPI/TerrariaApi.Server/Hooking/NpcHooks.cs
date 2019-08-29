@@ -18,12 +18,12 @@ namespace TerrariaApi.Server.Hooking
 			_hookManager = hookManager;
 
 			Hooks.Npc.PreSetDefaultsById = OnPreSetDefaultsById;
-			Hooks.Npc.PreNetDefaults = OnPreNetDefaults;
+//			Hooks.Npc.PreNetDefaults = OnPreNetDefaults;
 			Hooks.Npc.Strike = OnStrike;
 			Hooks.Npc.PreTransform = OnPreTransform;
 			Hooks.Npc.Spawn = OnSpawn;
 			Hooks.Npc.PreDropLoot = OnPreDropLoot;
-			Hooks.Npc.BossBagItem = OnBossBagItem;
+//			Hooks.Npc.BossBagItem = OnBossBagItem;
 			Hooks.Npc.PreAI = OnPreAI;
 			Hooks.Npc.Killed = OnKilled;
 		}
