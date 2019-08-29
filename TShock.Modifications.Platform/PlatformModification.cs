@@ -22,25 +22,25 @@ namespace Mintaka.Modifications.Platform
 
 		public override void Run()
 		{
-			ReLogic.OS.Platform temp = null;
-			var changePlatformMethodDefinition = SourceDefinition.MainModule.Import(Method(() => Callbacks.PlatformConstructorCallback.ChangePlatform(ref temp)));
-
-			var field = Field(() => ReLogic.OS.Platform.Current);
-			var cctor = Type<ReLogic.OS.Platform>().Methods.Single(m => m.Name == ".cctor");
-			var instructions = cctor.Body.Instructions;
-
-			if (instructions?.Count != 3 || instructions[1].OpCode != OpCodes.Stsfld || instructions[1].Operand != field)
-			{
-				throw new NotSupportedException("Could not patch Platform..cctor()");
-			}
-
-			var processor = cctor.Body.GetILProcessor();
-
-			processor.Body.Instructions.Clear();
-
-			processor.Append(Instruction.Create(OpCodes.Ldsflda, field));
-			processor.Append(Instruction.Create(OpCodes.Call, changePlatformMethodDefinition));
-			processor.Append(Instruction.Create(OpCodes.Ret));
+//			ReLogic.OS.Platform temp = null;
+//			var changePlatformMethodDefinition = SourceDefinition.MainModule.Import(Method(() => Callbacks.PlatformConstructorCallback.ChangePlatform(ref temp)));
+//
+//			var field = Field(() => ReLogic.OS.Platform.Current);
+//			var cctor = Type<ReLogic.OS.Platform>().Methods.Single(m => m.Name == ".cctor");
+//			var instructions = cctor.Body.Instructions;
+//
+//			if (instructions?.Count != 3 || instructions[1].OpCode != OpCodes.Stsfld || instructions[1].Operand != field)
+//			{
+//				throw new NotSupportedException("Could not patch Platform..cctor()");
+//			}
+//
+//			var processor = cctor.Body.GetILProcessor();
+//
+//			processor.Body.Instructions.Clear();
+//
+//			processor.Append(Instruction.Create(OpCodes.Ldsflda, field));
+//			processor.Append(Instruction.Create(OpCodes.Call, changePlatformMethodDefinition));
+//			processor.Append(Instruction.Create(OpCodes.Ret));
 		}
 
 	}

@@ -53,7 +53,7 @@ namespace TerrariaApi.Server
 			Hooking.NpcHooks.AttachTo(this);
 			Hooking.ProjectileHooks.AttachTo(this);
 			Hooking.ServerHooks.AttachTo(this);
-			Hooking.WiringHooks.AttachTo(this);
+//			Hooking.WiringHooks.AttachTo(this);
 			Hooking.WorldHooks.AttachTo(this);
 		}
 
@@ -393,7 +393,7 @@ namespace TerrariaApi.Server
 					Netplay.Clients[buffer.whoAmI].PendingTermination = true;
 					return true;
 				}
-				
+
 				switch ((PacketTypes)msgId)
 				{
 					case PacketTypes.ConnectRequest:
@@ -412,27 +412,44 @@ namespace TerrariaApi.Server
 						}
 
 						break;
-					case PacketTypes.LoadNetModule:
-						using (var stream = new MemoryStream(buffer.readBuffer))
+					case PacketTypes.ChatText:
+						var text = "";
+						using(var stream = new MemoryStream(buffer.readBuffer))
 						{
 							stream.Position = index;
-							using (var reader = new BinaryReader(stream))
+							using(var reader = new BinaryReader(stream))
 							{
-								ushort moduleId = reader.ReadUInt16();
-								//LoadNetModule is now used for sending chat text.
-								//Read the module ID to determine if this is in fact the text module
-								if (moduleId == Terraria.Net.NetManager.Instance.GetId<Terraria.GameContent.NetModules.NetTextModule>())
-								{
-									//Then deserialize the message from the reader
-									Terraria.Chat.ChatMessage msg = Terraria.Chat.ChatMessage.Deserialize(reader);
-
-									if (InvokeServerChat(buffer, buffer.whoAmI, @msg.Text, msg.CommandId))
-									{
-										return true;
-									}
-								}
+								reader.ReadByte();
+								reader.ReadRGB();
+								text = reader.ReadString();
 							}
 						}
+
+						if (this.InvokeServerChat(buffer, buffer.whoAmI, @text))
+							return true;
+
+						break;
+//					case PacketTypes.LoadNetModule:
+//						using (var stream = new MemoryStream(buffer.readBuffer))
+//						{
+//							stream.Position = index;
+//							using (var reader = new BinaryReader(stream))
+//							{
+//								ushort moduleId = reader.ReadUInt16();
+//								//LoadNetModule is now used for sending chat text.
+//								//Read the module ID to determine if this is in fact the text module
+//								if (moduleId == Terraria.Net.NetManager.Instance.GetId<Terraria.GameContent.NetModules.NetTextModule>())
+//								{
+//									//Then deserialize the message from the reader
+//									Terraria.Chat.ChatMessage msg = Terraria.Chat.ChatMessage.Deserialize(reader);
+//
+//									if (InvokeServerChat(buffer, buffer.whoAmI, @msg.Text, msg.CommandId))
+//									{
+//										return true;
+//									}
+//								}
+//							}
+//						}
 
 						break;
 
@@ -1058,14 +1075,15 @@ namespace TerrariaApi.Server
 			get { return this.serverChat; }
 		}
 
-		internal bool InvokeServerChat(MessageBuffer buffer, int who, string text, Terraria.Chat.ChatCommandId commandId)
+//		internal bool InvokeServerChat(MessageBuffer buffer, int who, string text, Terraria.Chat.ChatCommandId commandId)
+		internal bool InvokeServerChat(MessageBuffer buffer, int who, string text)
 		{
 			ServerChatEventArgs args = new ServerChatEventArgs
 			{
 				Buffer = buffer,
 				Who = who,
 				Text = text,
-				CommandId = commandId
+//				CommandId = commandId
 			};
 
 			this.ServerChat.Invoke(args);

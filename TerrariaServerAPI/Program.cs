@@ -88,7 +88,7 @@ namespace OTAPI.Shims.TShock
 		{
 			if (args.Any(x => x == "-skipassemblyload"))
 			{
-				Terraria.Main.SkipAssemblyLoad = true;
+//				Terraria.Main.SkipAssemblyLoad = true;
 			}
 
 			Terraria.WindowsLaunch.Main(args);
