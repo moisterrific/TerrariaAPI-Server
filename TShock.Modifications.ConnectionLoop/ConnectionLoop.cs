@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,15 +32,27 @@ namespace TShock.Modifications.ConnectionLoop
 
 			// Find the proper instruction range => if (i < num2)
 			var targetInstruction = checkBytes.Body.Instructions.Single(i =>
-				i.OpCode == OpCodes.Blt_S && i.Previous.OpCode == OpCodes.Ldloc_S &&
-				i.Previous.Previous.OpCode == OpCodes.Ldloc_3);
+				i.OpCode == OpCodes.Blt_S && i.Previous.OpCode == OpCodes.Ldloc_3 &&
+				i.Previous.Previous.OpCode == OpCodes.Ldloc_2);
+
 			checkBytes.Body.GetILProcessor().InsertAfter(targetInstruction,
 				new[]
 				{
-					Instruction.Create(OpCodes.Ldloc_S, checkBytes.Body.Variables[4]),
-					Instruction.Create(OpCodes.Ldc_I4_0),
-					Instruction.Create(OpCodes.Beq_S, targetInstruction.Operand as Instruction)
+					Instruction.Create(OpCodes.Ldloc_3),
+					Instruction.Create(OpCodes.Brfalse_S, targetInstruction.Operand as Instruction),
 				}.AsEnumerable());
+
+			// After inserted 2 short form instructions are out of bound.
+			foreach (var i in checkBytes.Body.Instructions)
+			{
+				if (i.OpCode == OpCodes.Blt_S || i.OpCode == OpCodes.Br_S)
+				{
+					if(Math.Abs((i.Operand as Instruction).Offset - i.Offset) >= 120)
+					{
+						i.OpCode = i.OpCode == OpCodes.Blt_S ? OpCodes.Blt : OpCodes.Br;
+					}
+				}
+			}
 		}
 	}
 }
